@@ -1,23 +1,36 @@
-import logo from './logo.svg';
+import React, {useEffect,useState} from 'react';
+import { Dimmer, Loader } from 'semantic-ui-react';
+import Weather from './components/weather';
 import './App.css';
 
 function App() {
-  return (
+  const [data,setData] = useState([]);  
+
+  useEffect(() => {   
+    navigator.geolocation.getCurrentPosition( async (position)=>{    
+      await fetch(`${process.env.REACT_APP_API_URL}/weather/?lat=${position.coords.latitude}&lon=${position.coords.longitude}&units=metric&APPID=${process.env.REACT_APP_API_KEY}`)
+      .then(res => res.json())
+      .then(result => {
+        setData(result);
+        console.log(result);      
+      })
+      .catch(error => { console.log(error); });    
+    }); 
+   
+  }, []); 
+  
+  
+    return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      {typeof data.main !== 'undefined' ? (
+        <Weather weatherData = {data}/>
+      ) :(
+        <div>
+          <Dimmer active>
+            <Loader>Loading..</Loader>
+          </Dimmer>
+       </div>
+      )}
     </div>
   );
 }
