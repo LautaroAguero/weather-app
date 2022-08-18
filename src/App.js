@@ -1,9 +1,10 @@
 import React, {useEffect,useState} from 'react';
 import { Dimmer, Loader } from 'semantic-ui-react';
-import Weather from './components/weather';
+import DayWeather from './components/dayWeather';
+import NightWeather from './components/nightWeather';
 import './App.css';
 
-function App() {
+function App() {  
   const [data,setData] = useState([]);  
 
   useEffect(() => {   
@@ -22,15 +23,18 @@ function App() {
   
     return (
     <div className="App">
-      {typeof data.main !== 'undefined' ? (
-        <Weather weatherData = {data}/>
-      ) :(
+      {typeof data.main !== 'undefined' ?         
+        new Date().toLocaleTimeString('it-IT') < "19:00:00" ?
+          <DayWeather weatherData = {data}/>
+          :
+          <NightWeather weatherData = {data}/>                        
+       :
         <div>
           <Dimmer active>
             <Loader>Loading..</Loader>
           </Dimmer>
        </div>
-      )}
+      }
     </div>
   );
 }
